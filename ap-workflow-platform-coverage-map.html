@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charter Impact — AP Workflow & Platform Coverage Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --text: #1A1A1A;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --border: #E2E0DC;
+    --border-light: #EEEDEA;
+    --accent: #2B5A8C;
+    --accent-light: #E8F0F8;
+    --sage-green: #3D7A5F;
+    --sage-green-light: #EAF4EF;
+    --amber: #A0742D;
+    --amber-light: #FDF6EA;
+    --red-muted: #9B4040;
+    --red-light: #FDF0F0;
+    --purple: #6B5B8A;
+    --purple-light: #F3F0F8;
+    --tbd-blue: #5078A0;
+    --tbd-light: #ECF2F8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* Header */
+  .doc-header {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid var(--border);
+  }
+  .doc-header h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+  }
+  .doc-meta span { white-space: nowrap; }
+  .doc-meta .label { color: var(--text-muted); margin-right: 4px; }
+
+  /* Intro */
+  .intro {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 48px;
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* Section headers */
+  h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 24px;
+    margin-top: 56px;
+    letter-spacing: -0.3px;
+  }
+  h2:first-of-type { margin-top: 0; }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    margin-top: 36px;
+  }
+
+  p { margin-bottom: 14px; }
+
+  /* Stage cards */
+  .stages-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .stage-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 22px;
+    position: relative;
+  }
+  .stage-card .stage-number {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .stage-card .stage-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .stage-card p {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    line-height: 1.6;
+  }
+  .stage-card.pain-point {
+    border-left: 3px solid var(--amber);
+  }
+  .stage-card.pain-point .stage-number {
+    color: var(--amber);
+    background: var(--amber-light);
+  }
+
+  /* Coverage table */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 24px 0 48px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .coverage-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .coverage-table thead th {
+    background: #F5F4F2;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+  }
+  .coverage-table thead th:first-child {
+    min-width: 120px;
+  }
+  .coverage-table thead th.current { color: var(--text-muted); }
+  .coverage-table thead th.evaluating { color: var(--accent); }
+
+  .coverage-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+  }
+  .coverage-table tbody tr:last-child td { border-bottom: none; }
+  .coverage-table tbody tr:hover { background: #FDFCFB; }
+
+  .coverage-table .stage-label {
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  .coverage-table .stage-label small {
+    display: block;
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Cell tags */
+  .cell-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-bottom: 4px;
+  }
+  .tag-strong { color: var(--sage-green); background: var(--sage-green-light); }
+  .tag-partial { color: var(--amber); background: var(--amber-light); }
+  .tag-weak { color: var(--red-muted); background: var(--red-light); }
+  .tag-tbd { color: var(--tbd-blue); background: var(--tbd-light); }
+  .tag-none { color: var(--text-muted); background: #F0F0EE; }
+
+  .cell-detail {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* Analysis section */
+  .analysis-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .analysis-block h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .analysis-block p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+  }
+
+  /* Stack scenario cards */
+  .scenario-section {
+    margin-top: 32px;
+  }
+  .scenario-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .scenario-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .scenario-card p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .scenario-card .stack-line {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 6px 14px;
+    border-radius: 6px;
+  }
+  .scenario-card.procurify-card {
+    border-left: 3px solid var(--amber);
+  }
+
+  /* Summary box */
+  .summary-box {
+    background: var(--accent-light);
+    border: 1px solid #C8D9EA;
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 32px 0 48px;
+  }
+  .summary-box h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .summary-box p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* Demo validation table */
+  .demo-table-wrapper {
+    overflow-x: auto;
+    margin: 24px 0 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .demo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .demo-table thead th {
+    background: #F5F4F2;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+  .demo-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+    color: var(--text-secondary);
+  }
+  .demo-table tbody tr:last-child td { border-bottom: none; }
+  .demo-table tbody td:first-child {
+    font-weight: 500;
+    color: var(--text);
+  }
+  .demo-table .vendor-tags {
+    white-space: nowrap;
+  }
+  .demo-table .vendor-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-right: 4px;
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.7;
+  }
+
+  /* Print styles */
+  @media print {
+    body { font-size: 12px; background: white; }
+    .page-container { padding: 24px 16px; max-width: none; }
+    .stages-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .stage-card, .scenario-card, .analysis-block, .summary-box { break-inside: avoid; }
+    .table-wrapper, .demo-table-wrapper { overflow: visible; }
+  }
+
+  @media (max-width: 768px) {
+    .page-container { padding: 24px 16px; }
+    .doc-header h1 { font-size: 24px; }
+    .stages-grid { grid-template-columns: 1fr; }
+    .doc-meta { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <h1>Charter Impact — AP Workflow &amp; Platform Coverage Map</h1>
+    <div class="doc-meta">
+      <span><span class="label">Prepared:</span> May 2026</span>
+      <span><span class="label">For:</span> Charter Impact Leadership (Adam, David, Vireak)</span>
+      <span><span class="label">From:</span> RIG Builders (Sam, Jason)</span>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro">
+    Charter Impact's AP workflow breaks into six stages. Every invoice passes through some or all of these stages on its way from submission to the general ledger. The platforms Charter Impact uses today — and the platforms being evaluated — each cover different stages of this workflow. This document maps that coverage so everyone can see, at a glance, where each system plays, where the gaps are, and where the pain points live.
+  </div>
+
+  <!-- Six Stages -->
+  <h2>The Six Stages of AP at Charter Impact</h2>
+  <div class="stages-grid">
+    <div class="stage-card">
+      <div class="stage-number">Stage 1</div>
+      <div class="stage-title">Invoice Submission</div>
+      <p>How invoices enter the system. Clients submit via ShareFile drop folders, direct upload into a procurement system, email, or directly into Sage. High-volume schools often submit batch PDFs containing 50–120+ pages that must be manually split before processing.</p>
+    </div>
+    <div class="stage-card">
+      <div class="stage-number">Stage 2</div>
+      <div class="stage-title">Procurement &amp; Approval</div>
+      <p>Client-facing approval workflows — department-based routing, amount thresholds, multi-level approval chains, PO matching. This is the stage that drives clients to Edstruments and Procurify, because Sage only supports amount-based thresholds.</p>
+    </div>
+    <div class="stage-card pain-point">
+      <div class="stage-number">Stage 3 — Pain Point</div>
+      <div class="stage-title">Invoice Coding &amp; Verification</div>
+      <p>Every invoice is coded to the correct GL account, location, resource code, LCAP function, and memo — and every client has different rules. Sage's OCR regularly misreads invoice numbers, amounts, vendor names, and credit memos. This is where coding intelligence matters most.</p>
+    </div>
+    <div class="stage-card pain-point">
+      <div class="stage-number">Stage 4 — Pain Point</div>
+      <div class="stage-title">Payment Selection</div>
+      <p>Clients review an aging report and select which vendors to pay. Today this happens via Excel markup by email. The associate manually re-enters selections into Sage one by one, with a full page reload between each action. For high-volume clients: 6+ hours/week of purely mechanical work.</p>
+    </div>
+    <div class="stage-card">
+      <div class="stage-number">Stage 5</div>
+      <div class="stage-title">Payment Execution</div>
+      <p>Check runs, ACH/NACHA file generation, positive pay uploads, and payment distribution. Currently handled in Sage with manual handoffs to analysts. Same-day and rush payments are handled in-house because no third-party platform has met CI's requirements.</p>
+    </div>
+    <div class="stage-card">
+      <div class="stage-number">Stage 6</div>
+      <div class="stage-title">GL Sync &amp; Accounting</div>
+      <p>Transactions land in Sage Intacct and flow into month-end close — reconciliation, journal entries, financial statement packages. The quality of everything upstream determines how much manual cleanup happens here.</p>
+    </div>
+  </div>
+
+  <!-- Coverage Table -->
+  <h2>Platform Coverage Map</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 20px;">Which stages each platform covers and at what depth — the core reference for understanding what each system does and doesn't do.</p>
+
+  <div class="table-wrapper">
+    <table class="coverage-table">
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th class="current">Sage Intacct</th>
+          <th class="current">Edstruments</th>
+          <th class="current">Procurify</th>
+          <th class="evaluating">BILL</th>
+          <th class="evaluating">Stampli</th>
+          <th class="evaluating">Basis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Stage 1 -->
+        <tr>
+          <td><span class="stage-label">1. Submission<small>Invoice intake</small></span></td>
+          <td>
+            <span class="cell-tag tag-partial">Partial</span><br>
+            <span class="cell-detail">Direct upload, max ~20-30 files, 20MB limit per batch</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Yes</span><br>
+            <span class="cell-detail">Clients submit through Edstruments</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Yes</span><br>
+            <span class="cell-detail">Clients submit through Procurify</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Yes</span><br>
+            <span class="cell-detail">Built-in intake: email, upload, vendor network</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Yes</span><br>
+            <span class="cell-detail">Built-in intake: email, upload, vendor portal</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-tbd">TBD</span><br>
+            <span class="cell-detail">Connects to existing document sources — details TBD in demo</span>
+          </td>
+        </tr>
+        <!-- Stage 2 -->
+        <tr>
+          <td><span class="stage-label">2. Procurement<small>Approval workflows</small></span></td>
+          <td>
+            <span class="cell-tag tag-weak">Limited</span><br>
+            <span class="cell-detail">Amount-based thresholds only — no department/role routing</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Strong</span><br>
+            <span class="cell-detail">Department, resource code, and custom field routing</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Strongest</span><br>
+            <span class="cell-detail">Department, location, dollar, custom routing + PO punch-outs (Amazon, Staples, Home Depot, etc.)</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-tbd">TBD</span><br>
+            <span class="cell-detail">Has approval workflows — depth relative to Edstruments/Procurify TBD in demo</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-tbd">TBD</span><br>
+            <span class="cell-detail">Has approval workflows — depth relative to Edstruments/Procurify TBD in demo</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-none">None</span><br>
+            <span class="cell-detail">No procurement or approval workflows. Client portal in development.</span>
+          </td>
+        </tr>
+        <!-- Stage 3 -->
+        <tr>
+          <td><span class="stage-label">3. Coding<small>GL coding &amp; verification</small></span></td>
+          <td>
+            <span class="cell-tag tag-weak">Weak</span><br>
+            <span class="cell-detail">Basic OCR with known accuracy problems — misread characters, amounts, credit memos</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-partial">Basic</span><br>
+            <span class="cell-detail">"Pretty accurate" OCR per AP team. No confidence scoring.</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-partial">Basic</span><br>
+            <span class="cell-detail">Basic OCR pre-fill. No confidence scoring.</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">ML</span><br>
+            <span class="cell-detail">Pattern-based ML (learns vendor-to-account mappings). Recently launched AI agents for multi-line coding.</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">ML + AI</span><br>
+            <span class="cell-detail">Pattern-based ML with AI-assisted coding. Coding templates per vendor/scenario. Confidence indicators on suggestions. Deeper than BILL on coding intelligence.</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">AI</span><br>
+            <span class="cell-detail">Contextual AI — uses invoice content, vendor research, historical patterns, client documents. Confidence scoring (high/med/low).</span>
+          </td>
+        </tr>
+        <!-- Stage 4 -->
+        <tr>
+          <td><span class="stage-label">4. Selection<small>Payment selection</small></span></td>
+          <td>
+            <span class="cell-tag tag-weak">Bottleneck</span><br>
+            <span class="cell-detail">Manual one-by-one selection with page reloads — 6+ hrs/week for high-volume clients</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-partial">Partial</span><br>
+            <span class="cell-detail">Multi-select (50 at a time), but no vendor-level bulk selection for partial payment runs</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-weak">Limited</span><br>
+            <span class="cell-detail">One payment at a time — no multi-select or bulk operations</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-tbd">TBD</span><br>
+            <span class="cell-detail">Payment queue with approval workflows — vendor-level grouping TBD in demo</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-tbd">TBD</span><br>
+            <span class="cell-detail">Payment queue with approval workflows — vendor-level grouping TBD in demo</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-none">None</span><br>
+            <span class="cell-detail">No payment capabilities</span>
+          </td>
+        </tr>
+        <!-- Stage 5 -->
+        <tr>
+          <td><span class="stage-label">5. Execution<small>Payment processing</small></span></td>
+          <td>
+            <span class="cell-tag tag-partial">Functional</span><br>
+            <span class="cell-detail">Check runs, ACH/NACHA, positive pay — functional but manual handoffs at every step</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-weak">Checkered</span><br>
+            <span class="cell-detail">Via Deluxe — checkered history, 50-payment batch limit</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-weak">Limited</span><br>
+            <span class="cell-detail">ACH, wire, check — one payment at a time. Only one CI client currently uses Procurify payments.</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Core</span><br>
+            <span class="cell-detail">ACH, check, virtual card — core capability, bulk processing</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Core</span><br>
+            <span class="cell-detail">ACH, check, virtual card — core capability, bulk processing</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-none">None</span><br>
+            <span class="cell-detail">No payment capabilities</span>
+          </td>
+        </tr>
+        <!-- Stage 6 -->
+        <tr>
+          <td><span class="stage-label">6. GL Sync<small>Sage integration</small></span></td>
+          <td>
+            <span class="cell-tag tag-strong">Is the GL</span><br>
+            <span class="cell-detail">All transactions live here</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-weak">One-way</span><br>
+            <span class="cell-detail">Syncs to Sage — <strong>no payment status sync-back</strong>. Manual update required after every payment run.</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-partial">Partial</span><br>
+            <span class="cell-detail">Syncs bills &amp; vendors to Sage. Custom field limitations. Payment sync partial.</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Bidirectional</span><br>
+            <span class="cell-detail">Daily auto + on-demand manual sync. All Sage objects + up to 6 custom objects.</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-strong">Bidirectional</span><br>
+            <span class="cell-detail">Real-time, 5-min dimension sync. Sage Recommended Solution. Smart Rules confirmed.</span>
+          </td>
+          <td>
+            <span class="cell-tag tag-partial">Overlay</span><br>
+            <span class="cell-detail">Syncs with Sage as GL overlay</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- What the Map Reveals -->
+  <h2>What the Map Reveals</h2>
+  <h3>Where the pain is — and what covers it</h3>
+  <p>Charter Impact's two biggest AP pain points are at <strong>Stage 3</strong> (manual invoice coding across highly variable clients) and <strong>Stage 4</strong> (the payment selection bottleneck). The current systems handle Stages 1–2 well but barely touch Stages 3–5.</p>
+
+  <div style="margin-top: 20px;">
+    <div class="analysis-block">
+      <h4>Edstruments &amp; Procurify</h4>
+      <p>Built to solve the procurement and approval problem (Stage 2) — and they do that effectively. But they offer only basic OCR at Stage 3, limited payment selection at Stage 4 (Edstruments allows multi-select of 50 at a time; Procurify only allows one payment at a time), and limited or problematic payment execution at Stage 5. Neither supports vendor-level bulk selection for partial payment runs — the core bottleneck. They were never designed to solve the problems that consume the most AP team time.</p>
+    </div>
+    <div class="analysis-block">
+      <h4>BILL &amp; Stampli</h4>
+      <p>Cover Stages 1 and 3–6, with Stage 2 (approval/procurement depth) as an open question for demos. If their approval capabilities are strong enough, they could potentially serve as the client-facing layer too. If not, they sit alongside the existing procurement systems and handle everything downstream.</p>
+    </div>
+    <div class="analysis-block">
+      <h4>Basis</h4>
+      <p>Goes deepest at Stage 3 — contextual AI coding with confidence scoring — and has its own intake layer (Stage 1) that connects to existing document sources. But it doesn't cover payment selection, payment execution, or procurement workflows.</p>
+    </div>
+  </div>
+
+  <!-- Stack Scenarios -->
+  <h3>What the stack actually looks like if Charter Impact adds an AP platform</h3>
+  <p>The coverage map shows that BILL and Stampli address Stages 3–6 — the stages where the biggest pain points live. But Charter Impact's clients aren't all on the same system today, and they won't all be tomorrow. The practical question is: for each type of client, what changes and what stays?</p>
+  <p>This doesn't have to be all-or-nothing. The realistic outcome is that most clients move to the new AP platform, but a subset stays on their current system where that makes sense.</p>
+
+  <div class="scenario-section">
+    <div class="scenario-card">
+      <h4>Clients currently on Sage only <span style="font-weight:400; color: var(--text-muted);">— the majority</span></h4>
+      <p>The simplest case. Today, these clients submit invoices via ShareFile, and Charter Impact codes and pays everything directly in Sage. Adding an AP platform means invoices flow through BILL or Stampli instead — better coding intelligence at Stage 3, a real payment selection workflow at Stage 4, automated payment execution at Stage 5, and bidirectional sync back to Sage at Stage 6. The AP platform sits on top of Sage. No system is being replaced — it's a net addition that addresses the core pain points.</p>
+      <span class="stack-line">Stack: Sage + BILL/Stampli</span>
+    </div>
+
+    <div class="scenario-card">
+      <h4>Clients currently on Edstruments <span style="font-weight:400; color: var(--text-muted);">— ~8 clients</span></h4>
+      <p>Edstruments' primary value is approval workflows (Stage 2) and a coding interface the AP team finds easier to use than Sage. But it has no payment status sync-back to Sage — associates manually update Edstruments after every payment run. Its payment capabilities (via Deluxe) have had a checkered history. And its coding intelligence is basic OCR without confidence scoring.</p>
+      <p>If BILL or Stampli's approval workflows can match what Edstruments provides — department-based routing, resource code routing, multi-level approvals — then there's a clear path to replacing Edstruments entirely. The AP team gets a single system for Stages 1–6 instead of shuttling between Edstruments and Sage. The manual payment-status sync-back problem goes away. The partnership consideration is lower here — Edstruments is not a significant driver of new business for Charter Impact.</p>
+      <p><em>This is a demo question: can the AP platform's approval workflows satisfy what Edstruments clients need? If yes, these clients move. If not, Edstruments stays for this subset.</em></p>
+      <span class="stack-line">Likely stack: Sage + BILL/Stampli (replacing Edstruments)</span>
+    </div>
+
+    <div class="scenario-card procurify-card">
+      <h4>Clients currently on Procurify <span style="font-weight:400; color: var(--text-muted);">— ~7 clients, 3–4 more onboarding</span></h4>
+      <p>Procurify is the harder case, for two reasons. First, Procurify has a capability that no AP automation platform is likely to match: PO punch-outs with direct integrations to Amazon Business, Staples, Home Depot, Grainger, Uline, and others. For clients that use punch-outs heavily, that's a real feature they'd lose. Second, Procurify is a meaningful sales and referral partner for Charter Impact — the partnership drives significant deal flow.</p>
+      <p>Running Procurify <em>and</em> an AP platform like BILL or Stampli for the same client doesn't make practical sense. Both systems would be trying to handle invoicing, coding, and payments — overlapping at Stages 3–5 with different integration paths to Sage. That creates more complexity, not less.</p>
+      <p>The practical approach: <strong>keep Procurify for clients that need it</strong> — particularly those with heavy punch-out usage and complex PO workflows — and keep offering it to new clients where its procurement depth is the right fit. For the majority of Charter Impact's client base that doesn't need those features, the AP platform becomes the default path. This preserves the partnership while still giving Charter Impact the benefits of AP automation for most of its portfolio.</p>
+      <p>The trade-off is real: Procurify clients won't get the coding intelligence, payment selection, or payment execution improvements. But that's a manageable subset — roughly 10 clients out of 80+ — and it's the cost of preserving a partnership that has value.</p>
+      <span class="stack-line">Stack: Sage + Procurify (no change for these clients)</span>
+    </div>
+
+    <div class="scenario-card">
+      <h4>New clients going forward</h4>
+      <p>Charter Impact drives system selection for new clients. With an AP platform in place, the default recommendation for most new clients would be BILL or Stampli — it covers approval workflows, coding, and payments in a single system on top of Sage. For clients that specifically need Procurify's procurement depth (punch-outs, complex PO lifecycle, supplier catalog integrations), Procurify remains an option. This is the optionality framing: Charter Impact offers the right system per client, not one system for everyone.</p>
+      <span class="stack-line">Default: Sage + BILL/Stampli</span>
+      <span class="stack-line" style="background: var(--amber-light); color: var(--amber); margin-left: 8px;">Where needed: Sage + Procurify</span>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-box">
+    <h4>What this means in practice</h4>
+    <p>Roughly 80% or more of Charter Impact's client base would be on the AP platform — all current Sage-only clients, all or most Edstruments clients, and all new clients that don't need Procurify's procurement features. The remaining ~10–15% stay on Procurify. The AP team would primarily work in one system (AP platform + Sage) with a known subset of clients on a different workflow (Procurify + Sage).</p>
+    <p style="margin-bottom: 0;">This is a significant improvement over today, where every client can be on a different system and associates describe onboarding to a new client as "almost like working for a different company." Going from five or six systems to two primary paths is a meaningful simplification — even if it's not full consolidation down to one.</p>
+  </div>
+
+  <!-- Demo Validation -->
+  <h2>What Demos Need to Validate</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 20px;">The coverage map has several TBD entries that can only be resolved through demos with Charter Impact's actual use cases. A complete question list will be sent to each vendor ahead of their session.</p>
+
+  <div class="demo-table-wrapper">
+    <table class="demo-table">
+      <thead>
+        <tr>
+          <th style="width: 35%;">Question</th>
+          <th style="width: 45%;">Why It Matters</th>
+          <th style="width: 20%;">Applies To</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>How deep are the approval and procurement workflows? Department routing, amount thresholds, PO lifecycle?</td>
+          <td>Determines whether BILL/Stampli could replace Edstruments/Procurify for some clients</td>
+          <td class="vendor-tags"><span class="vendor-tag">BILL</span><span class="vendor-tag">Stampli</span></td>
+        </tr>
+        <tr>
+          <td>How does payment selection work for CI's pattern — client selects vendors to pay, not individual invoices? Vendor-level grouping? Bulk select/deselect?</td>
+          <td>Determines whether Stage 4 bottleneck is actually solved or just moved</td>
+          <td class="vendor-tags"><span class="vendor-tag">BILL</span><span class="vendor-tag">Stampli</span></td>
+        </tr>
+        <tr>
+          <td>Can a client approve 200+ invoices at once?</td>
+          <td>High-volume schools use batch PDF watermarks because Sage caps at 30 — a higher limit could change client behavior</td>
+          <td class="vendor-tags"><span class="vendor-tag">BILL</span><span class="vendor-tag">Stampli</span></td>
+        </tr>
+        <tr>
+          <td>How does invoice intake work — what sources can it connect to (SharePoint, email, file drops)?</td>
+          <td>CI's invoices come from multiple sources; the intake mechanism needs to fit the existing workflow</td>
+          <td class="vendor-tags"><span class="vendor-tag">Basis</span></td>
+        </tr>
+        <tr>
+          <td>How does the system handle credit memos, past-due balances on utility invoices, and multi-line splits?</td>
+          <td>Edge cases the AP team flagged as recurring problems</td>
+          <td class="vendor-tags"><span class="vendor-tag">BILL</span><span class="vendor-tag">Stampli</span><span class="vendor-tag">Basis</span></td>
+        </tr>
+        <tr>
+          <td>Does the platform support same-day / rush payments?</td>
+          <td>CI handles these in-house today because no platform has met their speed requirements</td>
+          <td class="vendor-tags"><span class="vendor-tag">BILL</span><span class="vendor-tag">Stampli</span></td>
+        </tr>
+        <tr>
+          <td>How does coding intelligence handle vendor coding changes (e.g., supplies vendor adds a service line item)?</td>
+          <td>Pattern-based ML defaults to history; does the system flag deviations?</td>
+          <td class="vendor-tags"><span class="vendor-tag">BILL</span><span class="vendor-tag">Stampli</span><span class="vendor-tag">Basis</span></td>
+        </tr>
+        <tr>
+          <td>What AP analytics are available — per-associate throughput, void/reissue tracking, operational metrics?</td>
+          <td>The AP manager currently spends 2–4 hours manually compiling what should be a dashboard</td>
+          <td class="vendor-tags"><span class="vendor-tag">BILL</span><span class="vendor-tag">Stampli</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    This document maps platform capabilities against Charter Impact's AP workflow. The companion deliverable — the decision criteria and scoring rubric — provides the framework for weighing these capabilities against strategic, business, and adoption considerations.
+  </div>
+
+</div>
+</body>
+</html>
