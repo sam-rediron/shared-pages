@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP Automation Evaluation Framework — Charter Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-light: #4a4a5e;
+    --ink-muted: #8888a0;
+    --bg: #fafaf8;
+    --bg-warm: #f5f4f0;
+    --bg-card: #ffffff;
+    --accent: #2d5a7b;
+    --accent-light: #e8f0f6;
+    --accent-dark: #1d3d54;
+    --border: #e2e0db;
+    --border-light: #eeedea;
+    --tag-green: #2a7a4b;
+    --tag-green-bg: #e6f5ec;
+    --tag-amber: #8a6d1b;
+    --tag-amber-bg: #fdf4e0;
+    --tag-blue: #2d5a7b;
+    --tag-blue-bg: #e8f0f6;
+    --tag-purple: #6b4c8a;
+    --tag-purple-bg: #f0e8f6;
+    --tag-red: #9b3a3a;
+    --tag-red-bg: #fce8e8;
+    --radius: 6px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* Header */
+  .doc-header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+
+  .doc-header .meta {
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 16px;
+  }
+
+  .doc-header h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .doc-header .subtitle {
+    font-size: 17px;
+    color: var(--ink-light);
+    line-height: 1.5;
+    max-width: 720px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 56px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .section h2 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .section > p {
+    color: var(--ink-light);
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 720px;
+    margin-bottom: 24px;
+  }
+
+  /* Platform tags */
+  .platforms-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .platform-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .platform-tag .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .platform-tag.evaluating {
+    background: var(--tag-blue-bg);
+    color: var(--tag-blue);
+  }
+  .platform-tag.evaluating .dot { background: var(--tag-blue); }
+
+  .platform-tag.current {
+    background: var(--tag-amber-bg);
+    color: var(--tag-amber);
+  }
+  .platform-tag.current .dot { background: var(--tag-amber); }
+
+  .platform-tag.baseline {
+    background: var(--bg-warm);
+    color: var(--ink-muted);
+  }
+  .platform-tag.baseline .dot { background: var(--ink-muted); }
+
+  .tag-legend {
+    display: flex;
+    gap: 24px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .tag-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tag-legend .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Category card */
+  .category {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .category-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .category-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    flex-shrink: 0;
+    min-width: 28px;
+  }
+
+  .category-title {
+    font-family: 'Source Serif 4', serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .category-context {
+    padding: 16px 28px 8px;
+    font-size: 14px;
+    color: var(--ink-light);
+    line-height: 1.65;
+    border-bottom: 1px solid var(--border-light);
+    padding-left: 72px;
+  }
+
+  .criteria-list {
+    padding: 8px 28px 12px;
+  }
+
+  .criterion {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-light);
+    align-items: baseline;
+  }
+
+  .criterion:last-child {
+    border-bottom: none;
+  }
+
+  .criterion-priority {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    min-width: 68px;
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  .criterion-priority.critical {
+    background: var(--tag-red-bg);
+    color: var(--tag-red);
+  }
+  .criterion-priority.important {
+    background: var(--tag-amber-bg);
+    color: var(--tag-amber);
+  }
+  .criterion-priority.nice {
+    background: var(--bg-warm);
+    color: var(--ink-muted);
+  }
+
+  .criterion-content {
+    flex: 1;
+  }
+
+  .criterion-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+
+  .criterion-desc {
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+
+  /* How scoring works section */
+  .scoring-overview {
+    background: var(--bg-warm);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-top: 24px;
+  }
+
+  .scoring-overview h3 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .scoring-overview p {
+    font-size: 14px;
+    color: var(--ink-light);
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+
+  .scoring-overview p:last-child { margin-bottom: 0; }
+
+  /* Tier labels */
+  .tier-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 24px 0 12px;
+    border-bottom: 1px solid var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .tier-label .tier-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    .page { padding: 32px 20px 60px; }
+    .doc-header h1 { font-size: 26px; }
+    .category-header { padding: 16px 20px; }
+    .category-context { padding-left: 20px; }
+    .criteria-list { padding: 8px 20px 12px; }
+    .criterion { flex-direction: column; gap: 6px; }
+    .criterion-priority { align-self: flex-start; }
+    .platforms-row { gap: 6px; }
+    .tag-legend { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="meta">Charter Impact × RIG Builders &nbsp;·&nbsp; May 2026</div>
+    <h1>AP Automation Evaluation Framework</h1>
+    <p class="subtitle">How we're comparing platforms — the criteria, what they measure, and why each one matters for Charter Impact's specific environment. This framework will be used to score each platform during and after vendor demos.</p>
+  </div>
+
+  <!-- Platforms -->
+  <div class="section">
+    <div class="section-label">Platforms Under Evaluation</div>
+    <h2>What's Being Compared</h2>
+    <p>Six platforms are included in the evaluation. Three are being evaluated as new additions to Charter Impact's stack. Three are current systems being assessed against the same criteria for an objective, apples-to-apples comparison — so the reasoning behind any changes is documented and visible.</p>
+    <div class="platforms-row">
+      <span class="platform-tag evaluating"><span class="dot"></span>BILL</span>
+      <span class="platform-tag evaluating"><span class="dot"></span>Stampli</span>
+      <span class="platform-tag evaluating"><span class="dot"></span>Basis</span>
+      <span class="platform-tag current"><span class="dot"></span>Edstruments</span>
+      <span class="platform-tag current"><span class="dot"></span>Procurify</span>
+      <span class="platform-tag baseline"><span class="dot"></span>Sage Intacct</span>
+    </div>
+    <div class="tag-legend">
+      <span><span class="dot" style="background:var(--tag-blue)"></span> Evaluating for adoption</span>
+      <span><span class="dot" style="background:var(--tag-amber)"></span> Current system — benchmarked</span>
+      <span><span class="dot" style="background:var(--ink-muted)"></span> GL baseline — not changing</span>
+    </div>
+  </div>
+
+  <!-- How Scoring Works -->
+  <div class="section">
+    <div class="section-label">Methodology</div>
+    <h2>How Scoring Will Work</h2>
+    <div class="scoring-overview">
+      <p>Each criterion below is tagged <strong>Critical</strong>, <strong>Important</strong>, or <strong>Nice to Have</strong> based on the pain points and requirements surfaced during AP team discovery and leadership conversations. Criteria are organized into two tiers.</p>
+      <p><strong>Tier 1 — AP Automation Requirements</strong> covers the capabilities that solve the problems this initiative was organized around. These are the criteria where the current systems fall short and where the evaluation will be won or lost.</p>
+      <p><strong>Tier 2 — Strategic &amp; Business Criteria</strong> covers the dimensions where existing partnerships, business relationships, adoption feasibility, and cost matter. This is where Procurify and Edstruments earn their points — and where trade-offs between operational capability and business value become visible.</p>
+      <p>During demos, each platform will be scored against every applicable criterion. Categories will be weighted so the final comparison reflects Charter Impact's priorities. <strong>The alignment session before demos is where we agree on those weights together.</strong></p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TIER 1 -->
+  <!-- ============================================ -->
+
+  <div class="tier-label">Tier 1 — AP Automation Requirements <span class="tier-desc">The problems this initiative was built to solve</span></div>
+
+  <!-- Category 1: Coding Intelligence -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-number">01</span>
+      <span class="category-title">Invoice Coding Intelligence &amp; Verification</span>
+    </div>
+    <div class="category-context">
+      Charter Impact's core complexity: every invoice must be manually coded to the correct GL account, location, resource code, and LCAP function — and every client has a different chart of accounts. Sage's built-in OCR regularly misreads invoice numbers, amounts, vendor names, and credit memos. 51 coding errors were found in a single client review. This category measures how much of that manual verification burden the platform can absorb.
+    </div>
+    <div class="criteria-list">
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Coding intelligence approach</div>
+          <div class="criterion-desc">What method does the platform use to suggest GL codes? Basic OCR only, pattern-based ML that learns from history, or contextual AI that reasons about invoice content, vendor context, and client rules? Pattern-based ML works for consistent coding but struggles when the same vendor gets coded differently by client, funding source, or month.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Preset coding rules / templates (string lines)</div>
+          <div class="criterion-desc">Can the platform pre-fill GL coding fields (object code, function code, resource code) per vendor or per vendor + client combination? Charter Impact's prior system (MIP) had "string lines" that did this — Sage lost this capability. Can rules include conditional logic (e.g., Vendor X codes to supplies normally, but services when the line item is a repair)?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Multi-line invoice splits</div>
+          <div class="criterion-desc">Can the platform handle invoices that need splitting into multiple GL lines? Workers' comp (premium vs. components), copier leases (taxes, overages, base lease), employee reimbursements (supplies, mileage, meals). Does it support templates for recurring split patterns? Does it validate that line totals match the invoice total?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Credit memo handling</div>
+          <div class="criterion-desc">Does the platform structurally prevent credit memos from being processed as debits? Sage currently pushes credit memos through as invoices due — if AP doesn't catch it, the credit gets paid out. Does the platform auto-detect credit memos from the document, or require manual designation?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">New line item / coding deviation detection</div>
+          <div class="criterion-desc">When a known vendor changes what it provides (a supplies vendor adds a service line item), does the platform flag the deviation or silently default to historical coding? The AP team needs visibility into when the AI is uncertain, not just when it's confident.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Confidence scoring</div>
+          <div class="criterion-desc">Does the platform provide per-field (not just per-invoice) confidence indicators? Can the team configure a threshold above which items auto-advance and below which they're flagged for review? None of Charter Impact's current systems flag when the AI is uncertain about an extracted field.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Past-due balance parsing on utility invoices</div>
+          <div class="criterion-desc">Utility invoices show past-due balances alongside current charges. Sage captures the full amount. Charter Impact's policy is to only process current-period charges. Can the platform distinguish and separate these automatically when the invoice shows distinct line items?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Batch PDF splitting</div>
+          <div class="criterion-desc">High-volume schools submit batch PDFs with 50–120+ pages containing multiple invoices and varying-length backup documents. Can the platform auto-detect invoice boundaries, or does it require manual boundary selection? How does this compare to the current workflow of manually splitting in a PDF tool and re-uploading?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Invoice data extraction accuracy</div>
+          <div class="criterion-desc">How accurately does the platform read vendor names, invoice numbers (especially alphanumeric — Amazon invoices are the worst offender), amounts (commas vs. decimals, subtotals vs. totals), and dates? What is the stated field extraction accuracy rate? Amazon invoices alone account for 2,000–3,000 per week.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category 2: Payment Operations -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-number">02</span>
+      <span class="category-title">Payment Selection &amp; Execution</span>
+    </div>
+    <div class="category-context">
+      The payment selection bottleneck is the single biggest time sink in AP operations. Clients select which vendors to pay by marking up an aging report in Excel. The associate then manually translates those selections into Sage's Pay Bills screen, one invoice at a time with a full page reload between each action. For high-volume clients this consumes 6+ hours per week. One client takes nearly a full day.
+    </div>
+    <div class="criteria-list">
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Vendor-level payment selection</div>
+          <div class="criterion-desc">Charter Impact's clients don't approve individual invoices — they select which vendors to pay based on cash availability. Can the platform group invoices by vendor in the payment queue? Can the team bulk-select all invoices for a vendor? Can they work in both directions: "pay all except these vendors" and "pay only these vendors"?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Bulk payment processing</div>
+          <div class="criterion-desc">Can the platform process payments in bulk (hundreds at a time) without per-transaction clicks? Procurify currently allows only one payment at a time. Edstruments caps at 50. Sage requires one-by-one selection with page reloads. What are the batch limits?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Payment methods</div>
+          <div class="criterion-desc">Does the platform support ACH, printed checks, and virtual cards? Do individual transactions appear separately on bank statements for easy reconciliation? What are per-transaction costs for each method?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Rush / same-day payments</div>
+          <div class="criterion-desc">Charter Impact handles rush and same-day payments in-house today because no third-party platform has met their speed requirements. Does the platform support same-day ACH? Expedited checks — and if so, what's the delivery window? If the platform can't handle same-day physical checks, Charter Impact needs to retain an in-house path for that subset.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Bidirectional payment sync with Sage</div>
+          <div class="criterion-desc">Does payment status flow back to Sage automatically? Edstruments has no payment status sync-back — associates manually update it after every payment run. Procurify's sync is partial. This manual sync-back is pure overhead. Automatic bidirectional sync eliminates it.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Payment status visibility for clients</div>
+          <div class="criterion-desc">Clients want more transparency into when checks are cut, sent, and received. Does the platform provide client-facing payment status tracking or notifications?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Credit application across entities</div>
+          <div class="criterion-desc">Some clients have credits recorded under one location that need to be applied to bills at multiple locations. Can the platform facilitate cross-entity credit application, or is this constrained by how Sage handles intercompany transactions?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority nice">Nice to Have</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Electronic / email checks</div>
+          <div class="criterion-desc">A check delivered digitally for the vendor to print and deposit — reducing physical check printing volume and delivery logistics while accommodating vendors that require check payments.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority nice">Nice to Have</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Positive pay support</div>
+          <div class="criterion-desc">Does the platform generate positive pay files for bank upload, or does that remain a manual step in the current Sage workflow?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category 3: Sage Integration -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-number">03</span>
+      <span class="category-title">Sage Intacct Integration Depth</span>
+    </div>
+    <div class="category-context">
+      Sage Intacct is the GL and it's not changing. Every platform must work as an overlay on Sage. The depth of that integration — sync direction, frequency, dimension awareness, and whether Sage's own business logic fires on transactions made through the platform — directly affects coding accuracy and operational reliability across 100+ client entities.
+    </div>
+    <div class="criteria-list">
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Sync direction and frequency</div>
+          <div class="criterion-desc">Is the sync bidirectional? What's the frequency — real-time, every 5 minutes, daily, on-demand? When a client adds a new location or changes an object code in Sage mid-cycle, how quickly does the AP platform reflect that change? Stampli confirms 5-minute dimension sync. BILL offers daily auto + on-demand manual.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Dimension-aware sync</div>
+          <div class="criterion-desc">Does the platform sync Sage's full dimension model — locations, departments, classes, projects, custom dimensions? Charter Impact's clients use complex dimension structures. If the platform doesn't sync dimensions, coding in the AP layer won't match what Sage expects.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Smart Rules triggering</div>
+          <div class="criterion-desc">Sage's Smart Rules automate coding behavior (e.g., selecting a department auto-fills the related fund). Do transactions created through the AP platform trigger Smart Rules in Sage, or does the AP layer bypass them? Bypassing means losing a validation layer the team currently relies on.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Multi-entity management at scale</div>
+          <div class="criterion-desc">Can Charter Impact operate 100+ client entities from a single operational team within the platform? Most AP tools are built for one company managing its own books. Charter Impact needs multi-client, multi-entity complexity managed as a service on behalf of clients.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Custom object support</div>
+          <div class="criterion-desc">Does the platform support Sage custom objects and custom fields beyond the standard dimension model? BILL claims support for up to 6 custom objects. Charter school-specific fields (LCAP functions, resource codes, funding source tracking) may require this.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Entity-based user restrictions</div>
+          <div class="criterion-desc">Can the platform enforce Sage's entity-based access controls — ensuring an associate or client user can only see and act on their assigned entities? This is a compliance and data isolation requirement for a multi-client services firm.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Sage ecosystem standing</div>
+          <div class="criterion-desc">Is the platform a Sage Recommended Solution, listed on the Sage Marketplace, or neither? Sage Recommended status signals deeper integration testing and ongoing compatibility. Stampli is Sage Recommended. Procurify is Marketplace-listed. BILL is Marketplace-listed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category 4: Procurement & Approval -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-number">04</span>
+      <span class="category-title">Procurement &amp; Approval Workflows</span>
+    </div>
+    <div class="category-context">
+      The reason Charter Impact's clients are on Edstruments and Procurify in the first place: Sage only supports amount-based approval thresholds. Clients need department-based routing, location-based routing, and multi-level approval chains. If an AP platform can satisfy these same needs, it opens the door to consolidating clients off multiple systems. If it can't, the multi-system fragmentation persists — but the AP platform still handles coding and payments downstream.
+    </div>
+    <div class="criteria-list">
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Approval workflow depth</div>
+          <div class="criterion-desc">Does the platform support department-based routing, amount-based multi-level approvals, location/role-based routing, and combined routing rules (department + amount + location)? This is the specific capability gap in Sage that drives clients to Edstruments and Procurify.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Bulk client-side invoice approval</div>
+          <div class="criterion-desc">Can a client approve 200+ invoices at once? Sage's built-in bulk approval caps at 30, which is why high-volume schools use watermarked batch PDFs instead. A higher limit could change client approval behavior entirely, eliminating the batch PDF workflow.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Client-facing approval interface</div>
+          <div class="criterion-desc">How do clients interact with the approval workflow? In-app, email link, mobile? Charter Impact's clients currently approve through physical watermarks/stamps (ShareFile), electronic approval in Sage, or approval within Edstruments/Procurify. A new system needs to match or exceed the ease of the current methods.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">PO matching</div>
+          <div class="criterion-desc">Does the platform support matching invoices against purchase orders? Two-way (PO to invoice) or three-way (PO to receipt to invoice)? Procurify offers full three-way matching. This matters for clients with formal procurement processes.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">PO punch-outs / supplier catalog integrations</div>
+          <div class="criterion-desc">Does the platform integrate directly with supplier catalogs (Amazon Business, Staples, Home Depot, Grainger, Uline)? This is Procurify's key differentiator and the primary feature preventing some clients from migrating off Procurify. AP automation platforms typically don't offer this.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category 5: Analytics -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-number">05</span>
+      <span class="category-title">Analytics, Reporting &amp; Management Visibility</span>
+    </div>
+    <div class="category-context">
+      Charter Impact's leadership needs specific operational metrics to manage the AP team effectively. Currently, aggregate team volume can be reported but not broken down by individual — Sage doesn't support this. Compiling void/reissue data takes 2–4 hours of manual data gathering to produce a single number. General leadership meeting prep takes 3–4 hours.
+    </div>
+    <div class="criteria-list">
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Per-associate invoice throughput</div>
+          <div class="criterion-desc">Can the platform report how many invoices each associate processes per week? Charter Impact's previous system had this; Sage doesn't. Current tracking relies on a manual spreadsheet with self-reported weekly counts that can't be independently verified.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Void/reissue tracking</div>
+          <div class="criterion-desc">Can the platform track voids and reissues with structured data — reason codes, dates, amounts — rather than requiring narrative manual compilation? Can custom fields or tags be added to records (e.g., "error type" on a void)?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Operational dashboards</div>
+          <div class="criterion-desc">Does the platform provide a real-time view of processing status, exception rates, processing times, and workload balance — replacing the manual tracking spreadsheet and verbal check-ins at the daily standup?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority nice">Nice to Have</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Leadership-ready reporting</div>
+          <div class="criterion-desc">Can reports be exported or scheduled in a format ready for leadership review without hours of manual reformatting? Does the platform support the operational metrics Charter Impact's leadership regularly needs?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category 6: Invoice Intake & Submission -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-number">06</span>
+      <span class="category-title">Invoice Intake &amp; Submission</span>
+    </div>
+    <div class="category-context">
+      Invoices enter Charter Impact's workflow from multiple channels: ShareFile drop folders, direct upload into procurement systems, email, and (for some) directly into Sage. Any new platform needs to connect to these existing intake paths — or provide a compelling enough alternative that clients are willing to change behavior.
+    </div>
+    <div class="criteria-list">
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Intake methods supported</div>
+          <div class="criterion-desc">Can invoices be submitted via email, direct upload, vendor portal, and/or integration with existing file exchange systems (ShareFile, SharePoint)? Does the platform provide a dedicated AP email address that auto-ingests attachments?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Upload capacity and limits</div>
+          <div class="criterion-desc">Sage is limited to ~20–30 files at a time with a 20MB cap per batch. What are the platform's upload limits? Can it handle bulk uploads of 50+ files without failures or manual retries?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority nice">Nice to Have</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Compatibility with existing client systems</div>
+          <div class="criterion-desc">For clients who stay on other systems (e.g., Ramp), can invoices processed in those systems still flow through to the new AP platform for coding and payment? The new system needs to work in tandem with systems clients already use, not require full replacement across the board.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TIER 2 -->
+  <!-- ============================================ -->
+
+  <div class="tier-label">Tier 2 — Strategic &amp; Business Criteria <span class="tier-desc">Business context, partnerships, costs, and adoption</span></div>
+
+  <!-- Category 7: Vendor Profile -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-number">07</span>
+      <span class="category-title">Vendor Profile &amp; Durability</span>
+    </div>
+    <div class="category-context">
+      Charter Impact needs confidence that the vendor will be around in 3–5 years and that the platform will continue to be maintained and improved. This category assesses company fundamentals, ecosystem position, and implementation support.
+    </div>
+    <div class="criteria-list">
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Company maturity and track record</div>
+          <div class="criterion-desc">How long has the company been operating? Customer base size? Funding history and financial stability? A newer platform with $100M in funding (Basis, founded 2023) carries different risk than a publicly traded company (BILL) or an established mid-market player (Stampli).</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Implementation and onboarding support</div>
+          <div class="criterion-desc">What does the implementation process look like? Dedicated onboarding team? Timeline? How hands-on is vendor support during rollout versus being one of thousands of customers? Charter Impact's AP team is currently short-staffed — capacity for piloting is limited.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Security and compliance</div>
+          <div class="criterion-desc">SOC 2 compliance? ISO certifications? Data handling practices? Charter Impact handles financial data for 100+ client organizations — security standards are non-negotiable.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority nice">Nice to Have</span>
+        <div class="criterion-content">
+          <div class="criterion-name">API availability and documentation</div>
+          <div class="criterion-desc">Is there a public, documented API for building custom integrations or automations? This affects long-term flexibility. Basis's API is not yet publicly documented, which limits integration options today.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category 8: Strategic Fit -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-number">08</span>
+      <span class="category-title">Strategic &amp; Business Fit</span>
+    </div>
+    <div class="category-context">
+      The decision isn't just operational — it has business relationship and revenue implications. Procurify brings in significant deal flow. Edstruments is a referral partner. BILL has an existing Red Iron Group relationship. These dimensions need to be weighed alongside operational capability so the trade-offs are visible and deliberate.
+    </div>
+    <div class="criteria-list">
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Partnership and lead generation value</div>
+          <div class="criterion-desc">Does this platform drive revenue for Charter Impact through referrals, co-selling, or sales partnerships? Procurify's partnership has driven significant deal flow. Any system change that makes Procurify redundant for some clients needs to be weighed against that partnership's value. The goal is optionality — offering the right system per client — not forced consolidation.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Red Iron Group relationship and leverage</div>
+          <div class="criterion-desc">Is the vendor already used by other RIG portfolio companies? BILL is used by two other portfolio companies, and a firm CEO sits on BILL's advisory board — providing pricing leverage and implementation support. This kind of relationship advantage matters for negotiation and accountability.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">System consolidation potential</div>
+          <div class="criterion-desc">Could this platform replace Edstruments and/or Procurify for some or all clients? Fewer systems means less training burden, less context-switching, no manual payment-status sync-back, and a simpler foundation for future automation. But consolidation that disrupts valuable partnerships needs to justify itself with clear operational ROI.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Education-specific capabilities</div>
+          <div class="criterion-desc">Is the platform built for or experienced with K-12 charter school environments? Does it natively understand LCAP functions, resource codes, funding source tracking, ADA-based allocation splits? Edstruments scores highest here — it's K-12 only. General-purpose platforms need to handle these via configuration.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Adoption feasibility</div>
+          <div class="criterion-desc">What's the training burden? How much change management is needed? Can the team absorb a new system alongside daily workload? Current staffing constraints affect near-term capacity for piloting. One new system is easier to adopt than two.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category 9: Cost -->
+  <div class="category">
+    <div class="category-header">
+      <span class="category-number">09</span>
+      <span class="category-title">Cost &amp; Total Cost of Ownership</span>
+    </div>
+    <div class="category-context">
+      All platforms use enterprise pricing. Costs will be evaluated during and after demos. The question is whether the operational savings and risk reduction justify the investment — and whether volume negotiation at the Red Iron Group level improves the economics.
+    </div>
+    <div class="criteria-list">
+      <div class="criterion">
+        <span class="criterion-priority critical">Critical</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Licensing model and per-entity cost</div>
+          <div class="criterion-desc">How is the platform priced — per user, per entity, per transaction, flat fee? At 100+ client entities, per-entity pricing compounds quickly. What's the estimated annual cost at Charter Impact's scale?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Per-transaction fees</div>
+          <div class="criterion-desc">What are ACH fees, check fees, and virtual card fees per transaction? Current cost for ACH via NACHA file upload is essentially free (5–10 minutes of associate time). A quoted ~$1/transaction for ACH previously made outsourcing uneconomical. What's the breakeven?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Implementation and setup costs</div>
+          <div class="criterion-desc">One-time implementation fees, data migration costs, training costs, and integration setup. What's the total first-year investment versus ongoing annual cost?</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority important">Important</span>
+        <div class="criterion-content">
+          <div class="criterion-name">ROI and payback period</div>
+          <div class="criterion-desc">How quickly does the operational savings (reduced manual hours, fewer errors, capacity to serve more clients without proportional headcount) pay back the investment? Payment operations savings are immediate and quantifiable. Coding accuracy improvement is harder to quantify but addresses higher-stakes risk.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority nice">Nice to Have</span>
+        <div class="criterion-content">
+          <div class="criterion-name">1099 filing and EIN validation</div>
+          <div class="criterion-desc">Does the platform include 1099 filing capabilities with EIN validation against IRS records? Charter Impact currently uses a costly third-party service. The 2026 IRS threshold change ($600 → $2,000) reduces 1099 volume by ~25%. This conversation needs to happen by approximately October.</div>
+        </div>
+      </div>
+      <div class="criterion">
+        <span class="criterion-priority nice">Nice to Have</span>
+        <div class="criterion-content">
+          <div class="criterion-name">Vendor ID inconsistency handling</div>
+          <div class="criterion-desc">No AP layer can fix Sage's underlying vendor records (names/IDs can't be changed once set). But does the platform offer normalized display, EIN-based grouping, or better filtering that mitigates the sort-order and searchability problems caused by inconsistent naming conventions?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    <p>This framework will be used to structure vendor demos and score each platform. Category weights will be set during the alignment session before demos begin. The companion deliverable — the AP Workflow &amp; Platform Coverage Map — shows where each platform sits within Charter Impact's end-to-end AP process.</p>
+    <p style="margin-top: 8px;">Prepared by RIG Builders · May 2026</p>
+  </div>
+
+</div>
+</body>
+</html>
