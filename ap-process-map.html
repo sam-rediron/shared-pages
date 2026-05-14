@@ -387,6 +387,53 @@
 </style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <span class="site-nav-label">Charter Impact</span>
+    <a href="ap-process-map.html" class="site-nav-link active">Process Map</a>
+    <a href="ap-evaluation-framework.html" class="site-nav-link">Evaluation Framework</a>
+  </div>
+</nav>
+<style>
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #fff;
+    border-bottom: 1px solid #e8e6e3;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .site-nav-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 10px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+  }
+  .site-nav-label {
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-right: 8px;
+  }
+  .site-nav-link {
+    color: #666;
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .site-nav-link:hover {
+    color: #1a1a1a;
+    background: #f0efec;
+  }
+  .site-nav-link.active {
+    color: #2B5A8C;
+    background: #e8f0f8;
+    font-weight: 500;
+  }
+</style>
 <div class="page-container">
 
   <!-- Header -->
