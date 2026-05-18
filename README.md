@@ -6,6 +6,7 @@
 - [AP Automation Evaluation Framework](https://sam-rediron.github.io/shared-pages/ap-evaluation-framework.html) — `ap-evaluation-framework.html`
 - [Operating Rhythm — How the PRDs Deliver Jason's Vision](https://sam-rediron.github.io/shared-pages/operating-rhythm.html) — `operating-rhythm.html`
 - [Dashboard | ImpactOS](https://sam-rediron.github.io/shared-pages/mockup-ed-dashboard.html) — `mockup-ed-dashboard.html`
+- [ImpactOS Pilot — Product State, Tensions & Open Problems](https://sam-rediron.github.io/shared-pages/pilot-readiness-product-notes-2026-05-18.html) — `pilot-readiness-product-notes-2026-05-18.html`
 
 ---
 

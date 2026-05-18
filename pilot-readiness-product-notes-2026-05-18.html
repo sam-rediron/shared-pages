@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ImpactOS Pilot — Product State, Tensions &amp; Open Problems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f7;
+    --surface: #ffffff;
+    --text: #1a1a1a;
+    --text-secondary: #555;
+    --text-muted: #888;
+    --border: #e2e0dc;
+    --border-light: #f0eee9;
+    --accent: #1d4ed8;
+    --accent-light: #eff6ff;
+    --amber: #b45309;
+    --amber-bg: #fffbeb;
+    --amber-border: #fde68a;
+    --red: #b91c1c;
+    --red-bg: #fef2f2;
+    --red-border: #fecaca;
+    --green: #15803d;
+    --green-bg: #f0fdf4;
+    --green-border: #bbf7d0;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --purple-border: #ddd6fe;
+    --slate: #475569;
+    --font-heading: 'Source Serif 4', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --max-w: 820px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --radius: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* — Header — */
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #fff;
+    padding: 3.5rem 2rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .header-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 1.25rem;
+    color: rgba(255,255,255,0.75);
+  }
+  .header h1 {
+    font-family: var(--font-heading);
+    font-size: 2.1rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .header .subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 14.5px;
+    max-width: 580px;
+    line-height: 1.6;
+  }
+  .header .meta {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+  }
+  .header .meta span { display: flex; align-items: center; gap: 6px; }
+  .header .meta svg { width: 14px; height: 14px; opacity: 0.6; }
+
+  /* — Nav — */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,249,247,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+  }
+  .nav-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav a {
+    flex-shrink: 0;
+    display: block;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .nav a:hover { color: var(--text); border-color: var(--border); }
+
+  /* — Main — */
+  main {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 2.5rem 2rem 5rem;
+  }
+
+  /* — Sections — */
+  section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 56px;
+  }
+  section + section { border-top: 1px solid var(--border-light); padding-top: 3rem; }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-family: var(--font-heading);
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  p { margin-bottom: 1rem; color: var(--text-secondary); }
+
+  strong { color: var(--text); font-weight: 600; }
+
+  /* — Callouts — */
+  .callout {
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout-label {
+    font-weight: 700;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 0.4rem;
+  }
+  .callout-amber  { background: var(--amber-bg); border: 1px solid var(--amber-border); }
+  .callout-amber .callout-label { color: var(--amber); }
+  .callout-red    { background: var(--red-bg); border: 1px solid var(--red-border); }
+  .callout-red .callout-label { color: var(--red); }
+  .callout-green  { background: var(--green-bg); border: 1px solid var(--green-border); }
+  .callout-green .callout-label { color: var(--green); }
+  .callout-blue   { background: var(--accent-light); border: 1px solid #bfdbfe; }
+  .callout-blue .callout-label { color: var(--accent); }
+  .callout-purple { background: var(--purple-bg); border: 1px solid var(--purple-border); }
+  .callout-purple .callout-label { color: var(--purple); }
+
+  /* — Lists — */
+  ul, ol { margin: 0.75rem 0 1rem 1.5rem; color: var(--text-secondary); }
+  li { margin-bottom: 0.4rem; }
+  li strong { color: var(--text); }
+
+  /* — Quote — */
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+  blockquote p { margin-bottom: 0; }
+
+  /* — Tables — */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1.25rem 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: var(--surface);
+  }
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    background: #f8f7f5;
+    color: var(--slate);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .tag-yes { background: #fef2f2; color: var(--red); }
+  .tag-no  { background: var(--green-bg); color: var(--green); }
+  .tag-partial { background: var(--amber-bg); color: var(--amber); }
+
+  /* — Card grid — */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .card h4 {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+  }
+  .card .card-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .card ul { margin-left: 1.25rem; }
+  .card li { font-size: 14.5px; }
+
+  /* — Decision table — */
+  .decision-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 140px;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-light);
+    align-items: start;
+  }
+  .decision-row:last-child { border-bottom: none; }
+  .decision-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: right;
+    padding-top: 1px;
+  }
+  .decision-body p { margin-bottom: 0.25rem; }
+  .decision-body .d-label { font-weight: 600; color: var(--text); }
+  .decision-body .d-owner { font-size: 13px; color: var(--text-muted); }
+  .decision-blocks .tag { font-size: 10.5px; margin-top: 2px; }
+
+  /* — Status list — */
+  .status-group { margin: 1.25rem 0; }
+  .status-group h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+  }
+  .status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-green { background: var(--green); }
+  .dot-amber { background: var(--amber); }
+  .dot-red   { background: var(--red); }
+  .dot-purple { background: var(--purple); }
+
+  /* — Responsive — */
+  @media (max-width: 680px) {
+    .header { padding: 2.5rem 1.25rem 2rem; }
+    .header h1 { font-size: 1.6rem; }
+    main { padding: 2rem 1.25rem 4rem; }
+    .nav { padding: 0 1rem; }
+    .decision-row { grid-template-columns: 28px 1fr; }
+    .decision-blocks { grid-column: 2; }
+  }
+
+  /* — Print — */
+  @media print {
+    .nav { display: none; }
+    .header { background: #1e293b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── Header ─── -->
+<div class="header">
+  <div class="header-inner">
+    <div class="badge">Internal Product Document</div>
+    <h1>ImpactOS Pilot: Product State, Tensions &amp; Open Problems</h1>
+    <p class="subtitle">A comprehensive capture of what the system does today, where friction exists, what needs to change, and what remains unresolved heading into the three-school pilot.</p>
+    <div class="meta">
+      <span>
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 0a.5.5 0 0 1 .5.5V1h7V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5A.5.5 0 0 1 4 0zM2 3.5v1a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0-.5.5z"/></svg>
+        May 18, 2026
+      </span>
+      <span>
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+        Pilot Readiness Working Session
+      </span>
+      <span>
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5V8h3a.5.5 0 0 1 0 1H8a.5.5 0 0 1-.5-.5V4.5A.5.5 0 0 1 8 4z"/></svg>
+        Pilot launch: June 1
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Nav ─── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#s1">Actuals vs. Forecast</a>
+    <a href="#s2">Overrides</a>
+    <a href="#s3">Metric Sensitivity</a>
+    <a href="#s4">Grants</a>
+    <a href="#s5">Pilot Schools</a>
+    <a href="#s6">Budget Timing</a>
+    <a href="#s7">Legacy View</a>
+    <a href="#s8">Service Delivery</a>
+    <a href="#s9">Sign-Off Scope</a>
+    <a href="#s10">Capacity</a>
+    <a href="#s11">Open Decisions</a>
+    <a href="#s12">Summary</a>
+  </div>
+</nav>
+
+<!-- ─── Main ─── -->
+<main>
+
+<!-- ════════════════════ 1 ════════════════════ -->
+<section id="s1">
+  <div class="section-label">Section 01</div>
+  <h2>The Actuals vs. Forecast Problem</h2>
+  <p>This is the <strong>single biggest product issue</strong> heading into the pilot. It touches nearly every financial metric on the dashboard and has cascading implications for overrides, data trust, and the entire DOCF workflow.</p>
+
+  <h3>How the data works today</h3>
+  <p>ImpactOS pulls financial data from <strong>Sage Intacct</strong>, which contains only <strong>actuals</strong> — revenue and expenses posted to the general ledger. This is correct accounting data.</p>
+  <p>Separately, DOCFs maintain a <strong>forecast file</strong> (spreadsheet) outside of Sage containing working budgets, projected revenue, and forecasted expenses. This file is the basis for what DOCFs present to Executive Directors in weekly and monthly meetings.</p>
+  <p>There is also a distinction between the <strong>working budget</strong> (the DOCF's forecast file) and the <strong>approved budget</strong> (filed with the authorizer). What's historically been shown to clients is typically the approved budget side-by-side with actuals, but DOCFs use the working budget/forecast for planning and client conversations.</p>
+
+  <h3>Why this creates a problem</h3>
+  <p>Revenue recognition in Sage is <strong>lumpy</strong>. Revenue is only recognized when it hits the GL, which can lag significantly. State apportionment revenue may not be fully posted until 20+ days into the following month. At any given point during a month, Sage actuals for revenue-dependent metrics will understate what the DOCF considers the "real" number.</p>
+
+  <div class="callout callout-amber">
+    <div class="callout-label">Real-world friction — Marisol (Allegiance DOCF)</div>
+    <p>During sign-off, Marisol overrode <strong>nearly every metric</strong>. Some were trivial (enrollment off by 1), but others were material:</p>
+    <ul>
+      <li><strong>Days Cash on Hand</strong> — System showed ~54 days; she wanted ~70. Her calculation includes projected/forecast revenue. Adam's response: "If you include projected revenue, it's a cash projection, not days cash on hand."</li>
+      <li><strong>Revenue Per Student</strong> — System showed ~$8,000; she wanted ~$14,000. The gap is entirely due to revenue earned but not yet recognized in Sage.</li>
+      <li><strong>Salaries as % of Revenue</strong> — She was fine with the actuals-based number. Even within a single DOCF, the rules about actuals vs. forecast are <strong>not consistent</strong> across metrics.</li>
+    </ul>
+  </div>
+
+  <p>Jim (Peak Prep DOCF) had a different tolerance — comfortable with metrics being off by one or two, didn't require forecast-based overrides at the same scale.</p>
+
+  <h3>What this means for the product</h3>
+  <p>The override feature was designed for <strong>data correction</strong> — situations where the system calculates incorrectly due to non-standard GL coding, unusual account structures, or known data issues. But overrides are now being used for a completely different purpose: <strong>substituting forecast numbers for actuals</strong> because the DOCF wants the metric to match their forecast file. This conflation of two use cases in a single feature is a design problem.</p>
+
+  <h3>Current state of the codebase</h3>
+  <p>The system already has the architecture for this. <code>metricValues.ts</code> supports a <code>valueType</code> field (<code>actual</code> | <code>forecast</code>) and a view mode (<code>actuals</code> | <code>forecast</code> | <code>actuals-plus-forecast</code>). The blended mode uses a cutoff date (last closed accounting period) to show actuals for closed periods and forecast for open/future periods. PRD-03 specifies an Actuals/Forecast/Blended toggle on the dashboard.</p>
+
+  <div class="callout callout-blue">
+    <div class="callout-label">Key insight</div>
+    <p>The gap is not architecture — it's data. Forecast data does not exist in the system for pilot schools. The toggle exists in the PRD and the filtering logic exists in code, but there's nothing to filter because nobody has uploaded forecast values. The override became the stopgap.</p>
+  </div>
+
+  <h3>Minimum for pilot launch</h3>
+  <ul>
+    <li>A way to get forecast data into the system (upload/import or manual entry per metric)</li>
+    <li>Dashboard toggle or side-by-side view to show actuals alongside forecast</li>
+    <li>Clear labeling on each metric indicating which data mode is active</li>
+    <li>Methodology notes on revenue-sensitive metrics explaining what the number represents</li>
+  </ul>
+
+  <div class="callout callout-purple">
+    <div class="callout-label">Design tension</div>
+    <p>DOCFs prefer actuals and forecast <strong>side by side</strong>, not as a toggle. The concern about toggles is they hide information. The concern about side-by-side is information density on an already data-heavy dashboard. Both approaches are feasible.</p>
+  </div>
+
+  <p><strong>Operational prerequisite:</strong> Adam committed to reaching out to David (COO) to get definitive clarity on how DOCFs should operate — which metrics use which data source, and what the "CI Way" standard is. Without this decision, the product team cannot finalize the design.</p>
+
+  <div class="callout callout-green">
+    <div class="callout-label">Broader context</div>
+    <p>This is not a new problem. The tension between forecast files and Sage actuals has existed at Charter Impact for <strong>five years</strong>. ImpactOS is now acting as the <strong>forcing function</strong> — the pain of maintaining dual systems is finally real enough that DOCFs are willing to revisit their operational workflows.</p>
+  </div>
+</section>
+
+<!-- ════════════════════ 2 ════════════════════ -->
+<section id="s2">
+  <div class="section-label">Section 02</div>
+  <h2>Override Feature: Scope and Future</h2>
+
+  <h3>Current design</h3>
+  <p>DOCFs can override any scalar metric's value for a school. The override replaces the displayed value, shows attribution ("Overridden by DOCF jyerkie on 5/14/2026"), and is visible to EDs. Overrides are entered with a rationale and can be reviewed/expired.</p>
+
+  <h3>Two distinct use cases are conflated</h3>
+  <div class="card-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="card">
+      <h4>1. Data Correction</h4>
+      <p class="card-sub">The intended use case</p>
+      <p style="font-size:14.5px; color: var(--text-secondary);">The automated value is wrong due to non-standard GL coding, account mapping issues, or known data pipeline bugs. The DOCF is fixing a calculation error.</p>
+      <p style="font-size:13px; color: var(--green); font-weight:600; margin:0;">Should remain as override with amber indicator, rationale, and audit trail.</p>
+    </div>
+    <div class="card">
+      <h4>2. Forecast Substitution</h4>
+      <p class="card-sub">The unintended use case</p>
+      <p style="font-size:14.5px; color: var(--text-secondary);">The automated value is technically correct (accurate Sage actuals) but doesn't match what the DOCF presents from their forecast file. The DOCF is replacing actuals with forecast.</p>
+      <p style="font-size:13px; color: var(--red); font-weight:600; margin:0;">Should be handled through actuals/forecast view mode — not overrides.</p>
+    </div>
+  </div>
+
+  <h3>Override reporting and governance</h3>
+  <p>GitHub issue #167 covers <strong>Metric Override Reporting</strong> — an admin-level view showing how many metrics are overridden, how frequently, and by whom. The strategic intent: use this data to identify chronically overridden metrics, investigate root causes, and gradually <strong>remove the ability to override specific metrics</strong> as underlying data or calculations are fixed.</p>
+  <blockquote><p>The vision is progressive tightening: identify patterns, fix root causes (GL standardization, forecast import, methodology), then disable overrides for metrics that are reliably accurate. This prevents overrides from becoming a permanent crutch.</p></blockquote>
+
+  <h3>Precision tolerance</h3>
+  <p>Jim considers "off by one" close enough. Marisol required exact matches to her forecast numbers, even when the difference was definitional (actuals vs. forecast), not a calculation error.</p>
+  <p>Adam's framing: if enrollment shows 957 and the DOCF's spreadsheet shows 958, <strong>that's a data investigation</strong>. That's different from a DOCF wanting to change Days Cash on Hand by 15 days because they're including projected revenue.</p>
+</section>
+
+<!-- ════════════════════ 3 ════════════════════ -->
+<section id="s3">
+  <div class="section-label">Section 03</div>
+  <h2>Metric-by-Metric Sensitivity Analysis</h2>
+  <p>Adam classified each dashboard metric by whether it's affected by the actuals/forecast gap:</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th style="width:100px;">Affected?</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Student Enrollment</strong></td>
+          <td><span class="tag tag-no">No</span></td>
+          <td>Comes from SIS, not Sage. Snapshot timing can cause off-by-one.</td>
+        </tr>
+        <tr>
+          <td><strong>Days Cash on Hand</strong></td>
+          <td><span class="tag tag-partial">Partial</span></td>
+          <td>Cash balance is actual (correct). Daily burn rate uses actuals. But if DOCF includes projected revenue in cash balance, the number changes dramatically (~54 vs ~70 days).</td>
+        </tr>
+        <tr>
+          <td><strong>Average Daily Attendance</strong></td>
+          <td><span class="tag tag-no">No</span></td>
+          <td>Comes from SIS. P1/P2 reporting values are manual DOCF entry by design.</td>
+        </tr>
+        <tr>
+          <td><strong>Unduplicated Pupil % (UPP)</strong></td>
+          <td><span class="tag tag-no">No</span></td>
+          <td>Comes from SIS. No forecast dependency.</td>
+        </tr>
+        <tr>
+          <td><strong>Student/Teacher Ratio</strong></td>
+          <td><span class="tag tag-no">No</span></td>
+          <td>Enrollment (SIS) divided by certificated FTE (HR data). No revenue component.</td>
+        </tr>
+        <tr>
+          <td><strong>Revenue Per Student</strong></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+          <td>Revenue is the numerator. Sage actuals understate revenue until GL postings are complete. Gap: $8k (actuals) vs $14k (forecast) — nearly 2×.</td>
+        </tr>
+        <tr>
+          <td><strong>YTD Operating Income</strong></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+          <td>Revenue minus expenses. Revenue side is lumpy. Adam: "It's year-to-date, it's right" — the YTD actuals are accurate as of the last GL close.</td>
+        </tr>
+        <tr>
+          <td><strong>Demographics</strong></td>
+          <td><span class="tag tag-no">No</span></td>
+          <td>Comes from SIS. No financial component.</td>
+        </tr>
+        <tr>
+          <td><strong>Salaries as % of Revenue</strong></td>
+          <td><span class="tag tag-yes">Yes</span></td>
+          <td>Revenue is the denominator. But Marisol was fine with actuals here — inconsistent with her other stances. Suggests the "rule" is per-metric DOCF preference.</td>
+        </tr>
+        <tr>
+          <td><strong>Enrollment by Grade</strong></td>
+          <td><span class="tag tag-no">No</span></td>
+          <td>SIS data. Breakdown chart.</td>
+        </tr>
+        <tr>
+          <td><strong>Employees by Job Type</strong></td>
+          <td><span class="tag tag-no">No</span></td>
+          <td>HR/payroll data. Breakdown chart.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-blue">
+    <div class="callout-label">Key insight</div>
+    <p>Forecast sensitivity is concentrated in metrics that use <strong>revenue</strong> in their calculation — roughly 3–4 metrics. The majority of dashboard metrics are unaffected. This suggests a <strong>per-metric</strong> approach (certain metrics show forecast/blended while others always show actuals) may be more appropriate than a global toggle. PRD-03 already notes this as a Phase 2 consideration.</p>
+  </div>
+</section>
+
+<!-- ════════════════════ 4 ════════════════════ -->
+<section id="s4">
+  <div class="section-label">Section 04</div>
+  <h2>Restricted Grants / Net Asset Spend-Down</h2>
+
+  <h3>What DOCFs and EDs want</h3>
+  <p>Jim described a concrete, recurring workflow: roughly every two months, school leaders email asking how much they've spent on restricted grants and how much they have left. Jim manually compiles this. A KPI showing restricted grant spend would eliminate this entirely.</p>
+  <blockquote><p>Jim's conviction: Josh at Peak Prep would "live on this KPI every day." Dr. Fernandez would check it "pretty often."</p></blockquote>
+
+  <h3>Why it was dropped from the initial metric set</h3>
+  <p>The team previously had restricted grant spend-down data in the <strong>Domo instance</strong> (the legacy BI tool). The specific blocker: they had the <strong>spend side</strong> (how much has been spent per restricted grant) but not the <strong>balance side</strong> (how much is left). Katie pulled the balance for one location but described it as "onerous." Without both sides, the metric was held in the backlog.</p>
+
+  <h3>Path forward</h3>
+  <div class="callout callout-amber">
+    <div class="callout-label">Unresolved question</div>
+    <p>Is the team okay with shipping the <strong>spend-only half</strong> of this metric (how much has been spent per restricted grant, from Sage actuals), knowing the balance/remaining side isn't available? This answers "how much have we spent?" even if not "how much is left?" — but depends on capacity and prioritization.</p>
+  </div>
+</section>
+
+<!-- ════════════════════ 5 ════════════════════ -->
+<section id="s5">
+  <div class="section-label">Section 05</div>
+  <h2>What Each Pilot School Cares About Right Now</h2>
+  <p>The schools are entering the pilot at different moments in their operational calendar, which shapes what they'll want from ImpactOS immediately.</p>
+
+  <div class="card-grid">
+    <div class="card" style="border-left: 4px solid var(--accent);">
+      <h4>Peak Prep</h4>
+      <p class="card-sub">DOCF: Jim Surmeian</p>
+      <ul>
+        <li><strong>Budget cycle is done</strong> — already wrapped up budgeting</li>
+        <li>Near-term focus is <strong>board meeting preparation</strong> and forward planning</li>
+        <li>Josh (school leader) would heavily use restricted grant tracking if available</li>
+        <li>Jim's tolerance for numeric precision is relaxed — "off by one is fine"</li>
+        <li>Board mandates zero surplus — <strong>negative YTD operating income is expected and desirable</strong>. Same metric would alarm other schools.</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left: 4px solid var(--purple);">
+      <h4>Scholarship Prep / SPPS</h4>
+      <p class="card-sub">DOCF: Dave</p>
+      <ul>
+        <li>Just coming off an <strong>audit</strong></li>
+        <li>Want to surface audit results inside ImpactOS as part of the school's needs</li>
+        <li>Suggests a <strong>document/artifact surfacing need</strong>, not just metric display</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left: 4px solid var(--amber);">
+      <h4>Allegiance</h4>
+      <p class="card-sub">DOCF: Marisol (working with Sebastian Cognetta)</p>
+      <ul>
+        <li>Dealing with <strong>salary overspend</strong> — over-invested in staffing, need to course-correct</li>
+        <li>94.66% salary-to-revenue ratio is a concern she wants prominently surfaced</li>
+        <li>Most aggressive about overrides — wanted nearly every metric adjusted to her forecast file</li>
+        <li>Multiple locations (Fontana, Chino) — different contexts within the same org</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <div class="callout-label">Product implication</div>
+    <p>The same metric (YTD Operating Income, salaries as % of revenue) means different things at different schools depending on board mandates, strategic decisions, and current circumstances. The product needs to support <strong>per-school contextual interpretation</strong> — standing notes, threshold customization, interpretive overlays — not just raw numbers.</p>
+  </div>
+</section>
+
+<!-- ════════════════════ 6 ════════════════════ -->
+<section id="s6">
+  <div class="section-label">Section 06</div>
+  <h2>The Budget Season Timing Problem</h2>
+  <p>June is <strong>board budget season</strong>. Most EDs and school leaders will be "up to their eyeballs in budgets and presentations before boards." This creates a tension:</p>
+  <ul>
+    <li>The pilot wants active client engagement with ImpactOS during June</li>
+    <li>Clients are maximally busy with their most important annual deliverable</li>
+    <li><strong>However</strong>, budget season is also when metric visibility is most valuable — ADA trends, salary costs, restricted fund positions, revenue projections are exactly what's needed for budget decisions</li>
+  </ul>
+
+  <h3>The opportunity</h3>
+  <p>As Adam framed it: use the pilot to discover whether ImpactOS is "modestly useful" or "highly useful" during budgeting. Key inputs for budgeting that could come from ImpactOS:</p>
+  <ul>
+    <li><strong>ADA</strong> — current year vs. prior year vs. two years ago (trend for enrollment/revenue projections)</li>
+    <li><strong>Salary levels &amp; student/teacher ratio</strong> over time</li>
+    <li><strong>Unduplicated Pupil %</strong> trajectory (affects LCFF supplemental/concentration grant funding)</li>
+    <li><strong>Restricted grant spend-down</strong> position (directly informs budget allocation decisions)</li>
+  </ul>
+  <p>If ImpactOS can answer "what does ADA look like over the last three years?" and "how has student/teacher ratio shifted?" during a budget planning conversation, it becomes a tool the ED can't ignore. But that requires <strong>historical data</strong> in the system, which is partially available.</p>
+</section>
+
+<!-- ════════════════════ 7 ════════════════════ -->
+<section id="s7">
+  <div class="section-label">Section 07</div>
+  <h2>The Legacy View and What It Provided</h2>
+  <p>The older green dashboard (Domo-era) provided a fundamentally different presentation than the current ImpactOS card-based layout:</p>
+  <ul>
+    <li><strong>Revenue tables</strong> with category, title, GL/order code, and both actuals and budgeted side by side</li>
+    <li>Revenue Previous Month and Revenue YTD as separate sections</li>
+    <li>Expenses Previous Month and YTD Expenses in the same format</li>
+    <li>Cash Book Amount and Days Cash on Hand as standalone widgets</li>
+    <li>Location selector at the top</li>
+  </ul>
+
+  <div class="card-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="card">
+      <h4>Legacy (Domo) — Tabular, Variance-Oriented</h4>
+      <p class="card-sub">What DOCFs are accustomed to</p>
+      <p style="font-size:14.5px; color: var(--text-secondary);">Answers "where is my money going and how does it compare to plan?" — the fundamental question of school financial management. Shows actuals and budget naturally in table columns.</p>
+    </div>
+    <div class="card">
+      <h4>ImpactOS — Card-Based KPIs</h4>
+      <p class="card-sub">The current design</p>
+      <p style="font-size:14.5px; color: var(--text-secondary);">Answers "what is the current number and is it healthy?" — more executive-summary and scannable, but doesn't yet provide the actuals vs. budget comparison DOCFs rely on.</p>
+    </div>
+  </div>
+
+  <p>This connects directly to the actuals/forecast problem: the legacy view showed both numbers naturally because it was a table. The card view has to make a design choice about whether to show one number with a toggle or two numbers side by side, and neither option is as clean as a table row with columns.</p>
+</section>
+
+<!-- ════════════════════ 8 ════════════════════ -->
+<section id="s8">
+  <div class="section-label">Section 08</div>
+  <h2>ImpactOS as a Service Delivery Platform</h2>
+  <p>A strong theme emerged around ImpactOS being more than a dashboard — it should be the vehicle for <strong>standardizing how Charter Impact delivers service</strong>.</p>
+
+  <h3>The "CI Way" opportunity</h3>
+  <p>Charter Impact has not systemized:</p>
+  <ul>
+    <li>What a standard <strong>weekly meeting agenda</strong> should cover (Adam suggested 8 items)</li>
+    <li>What a standard <strong>monthly meeting</strong> should hit (10 items)</li>
+    <li>What a standard <strong>quarterly review</strong> covers</li>
+    <li>How DOCFs should present data consistently across clients</li>
+  </ul>
+  <p>Every DOCF currently runs meetings their own way, uses their own spreadsheets, and presents data in their own format. ImpactOS, paired with the meeting system (PRD-18), is the forcing function to standardize this.</p>
+
+  <h3>Product needs</h3>
+  <p>The product needs to support not just "view your metrics" but <strong>"run your meeting."</strong> This means:</p>
+  <ul>
+    <li>Dashboard as a <strong>presentation tool</strong> during client meetings</li>
+    <li>Standard agenda templates that map to dashboard sections</li>
+    <li>Meeting prep that pulls the right metrics and documents together automatically</li>
+    <li>Consistency across DOCFs — if one client gets a professional review and another gets ad-hoc spreadsheets, the product isn't doing its job</li>
+  </ul>
+
+  <h3>New team member onboarding</h3>
+  <p>Matthew (new DOCF, week 3) comes from a competitor firm and from school leadership. Even someone who "knows this world" is struggling to understand how CI operates because there's no documented standard. ImpactOS could serve as the onboarding tool — "this is how we present data, this is the standard meeting flow, this is what you show clients" — but only if the operational standards are defined first.</p>
+</section>
+
+<!-- ════════════════════ 9 ════════════════════ -->
+<section id="s9">
+  <div class="section-label">Section 09</div>
+  <h2>Content Sign-Off Scope</h2>
+  <p>A clarification was reached on what "content sign-off" means for pilot readiness.</p>
+
+  <div class="card-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="card" style="border-left: 4px solid var(--green);">
+      <h4>In Sign-Off Scope</h4>
+      <p class="card-sub">DOCFs validate accuracy of current data from systems of record</p>
+      <ul>
+        <li>Is the enrollment number correct as of the reference date?</li>
+        <li>Is the GL data flowing correctly into financial metrics?</li>
+        <li>Are the calculations applying the right formulas to the right data?</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left: 4px solid var(--red);">
+      <h4>Not in Sign-Off Scope</h4>
+      <p class="card-sub">Design and operational decisions handled separately</p>
+      <ul>
+        <li>Whether actuals match the forecast file (design/operational decision, not data fidelity)</li>
+        <li>Whether the DOCF prefers forecast numbers over actuals (view mode problem)</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>This distinction separates two types of overrides: <strong>"the data is wrong"</strong> (sign-off scope) vs. <strong>"I want different data"</strong> (product design scope).</p>
+</section>
+
+<!-- ════════════════════ 10 ════════════════════ -->
+<section id="s10">
+  <div class="section-label">Section 10</div>
+  <h2>Capacity and Prioritization Uncertainty</h2>
+  <p>Jay raised a concern that hasn't been resolved: <strong>how much capacity is available</strong> to continue building new metrics, address the forecast/actuals design work, and handle the backlog?</p>
+
+  <h3>The backlog</h3>
+  <ul>
+    <li>Forecast import / upload mechanism</li>
+    <li>Actuals + forecast view mode (toggle or side-by-side)</li>
+    <li>Restricted grant spend-down KPI</li>
+    <li>Items from conversations with Colleen (unspecified)</li>
+    <li>ADA-related work</li>
+    <li>Override reporting (#167)</li>
+    <li>Auth fixes (#170)</li>
+    <li>UI design sweep (#168)</li>
+    <li>The full backlog of metrics not yet implemented</li>
+  </ul>
+
+  <div class="callout callout-red">
+    <div class="callout-label">Unresolved</div>
+    <p>This is described as "a mountain of stuff" and there's no clear sense of what can be prioritized for the pilot window vs. what gets deferred. The answer determines whether pilot schools get forecast view, restricted grant tracking, and other requested features — or whether the pilot launches with actuals-only and visible gaps.</p>
+  </div>
+</section>
+
+<!-- ════════════════════ 11 ════════════════════ -->
+<section id="s11">
+  <div class="section-label">Section 11</div>
+  <h2>Open Decisions That Block Product Work</h2>
+  <p>These questions were raised but not resolved in the meeting. Several block product implementation.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:30px;">#</th>
+          <th>Decision Needed</th>
+          <th style="width:140px;">Owner</th>
+          <th style="width:200px;">Blocks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td>Per-metric rules: which metrics show actuals, which show forecast, which show both?</td>
+          <td>David (COO) via Adam</td>
+          <td>Dashboard view mode design, override policy</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>Is the forecast file going into Sage, or does ImpactOS ingest it separately?</td>
+          <td>David + DOCFs</td>
+          <td>Forecast import feature scope</td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td>Side-by-side vs. toggle vs. both for actuals/forecast?</td>
+          <td>Product (Sam) informed by DOCF preference</td>
+          <td>Dashboard layout, PRD-C2 scope</td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td>What is the acceptable precision tolerance per metric?</td>
+          <td>David + operational standards</td>
+          <td>Override policy, DOCF sign-off criteria</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>Ship restricted grant spend-only (no balance), or wait?</td>
+          <td>Jay + capacity assessment</td>
+          <td>Whether to build for pilot</td>
+        </tr>
+        <tr>
+          <td><strong>6</strong></td>
+          <td>What pilot activities will DOCFs run through ImpactOS in June?</td>
+          <td>Thursday session</td>
+          <td>Content creation, training, client comms</td>
+        </tr>
+        <tr>
+          <td><strong>7</strong></td>
+          <td>Override governance: when do specific metric overrides get turned off?</td>
+          <td>Adam + David</td>
+          <td>Override reporting feature requirements</td>
+        </tr>
+        <tr>
+          <td><strong>8</strong></td>
+          <td>Pilot build capacity: what gets built before June 1 vs. during June vs. deferred?</td>
+          <td>Sam + Jay + Jason</td>
+          <td>Everything</td>
+        </tr>
+        <tr>
+          <td><strong>9</strong></td>
+          <td>How to surface SPPS audit results in ImpactOS?</td>
+          <td>Jay + Dave</td>
+          <td>SPPS pilot relevance</td>
+        </tr>
+        <tr>
+          <td><strong>10</strong></td>
+          <td>Escalation path during pilot: clients report issues to DOCF, Jay, or someone else?</td>
+          <td>Jason</td>
+          <td>Client comms content</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════ 12 ════════════════════ -->
+<section id="s12">
+  <div class="section-label">Section 12</div>
+  <h2>Summary: What Exists, What's Missing, What's Blocked</h2>
+
+  <div class="status-group">
+    <h3><span class="status-dot dot-green"></span> Exists and Working</h3>
+    <ul>
+      <li>Sage Intacct integration pulling financial actuals</li>
+      <li>SIS integration pulling enrollment, ADA, demographics</li>
+      <li>Dashboard with card-based KPIs, threshold status, trend indicators</li>
+      <li>Override system (enter value, attribution, rationale, audit trail)</li>
+      <li>Meeting system (PRD-18) for structured client meetings</li>
+      <li>Document sharing</li>
+      <li>View mode filtering logic in code (<code>metricValues.ts</code>)</li>
+      <li>Multi-school/org structure</li>
+      <li>DOCF management console</li>
+    </ul>
+  </div>
+
+  <div class="status-group">
+    <h3><span class="status-dot dot-amber"></span> Designed but Not Yet Functional</h3>
+    <ul>
+      <li>Actuals/Forecast/Blended toggle (PRD-03 specifies it; code has filtering logic; no forecast data exists)</li>
+      <li>Forecast file upload/import mechanism</li>
+      <li>Per-metric methodology notes visible to EDs</li>
+      <li>Override reporting for admin governance (#167 in progress)</li>
+      <li>Restricted net assets / grant spend-down metric (in backlog, blocked by balance data)</li>
+      <li>Historical trend data for enrollment/ADA (financial history available; SIS history may need separate work)</li>
+    </ul>
+  </div>
+
+  <div class="status-group">
+    <h3><span class="status-dot dot-red"></span> Missing and Not Yet Designed</h3>
+    <ul>
+      <li>Side-by-side actuals vs. forecast view (requested by DOCFs; alternative to toggle)</li>
+      <li>Per-metric view mode (actuals for enrollment, blended for revenue — Phase 2 in PRD-03)</li>
+      <li>Budget variance tables (the legacy Domo-style view — actuals vs. budget by GL category)</li>
+      <li>Standard meeting agenda templates connected to dashboard sections</li>
+      <li>Working budget vs. approved budget distinction</li>
+      <li>Progressive override restriction (ability to disable overrides per metric over time)</li>
+    </ul>
+  </div>
+
+  <div class="status-group">
+    <h3><span class="status-dot dot-purple"></span> Blocked by Operational Decisions</h3>
+    <ul>
+      <li>Metric definition standards — which number is "right" for each metric</li>
+      <li>Forecast file disposition — does it move into Sage or get ingested separately?</li>
+      <li>DOCF operating standards — consistency in how data is presented to clients</li>
+      <li>Override policy — what constitutes a legitimate override vs. a view mode preference</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+</body>
+</html>
